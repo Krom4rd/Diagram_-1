@@ -360,10 +360,15 @@ class Note():
     def __str__(self):
         try:
             if self.tag:
-                return f'{'_' * 70 + '\n'}Title: {", ".join(i for i in self.title)}\nTag: {", ".join(i for i in self.tag)}\nNote:\n{self.note}\n'
+                return f"{'_' * 70}\n\
+Title: {', '.join(i for i in self.title)}\n\
+Tag: {', '.join(i for i in self.tag)}\n\
+Note:\n {self.note}"
         except AttributeError:
             pass
-        return f'{'_' * 70 + '\n'}Title: {", ".join(i for i in self.title)}\nNote:\n{self.note}\n'
+        return f"{'_' * 70}\n\
+Title: {', '.join(i for i in self.title)}\n\
+Note:\n {self.note}"
         
 class Note_book():
     def __init__(self) -> None:
@@ -470,7 +475,7 @@ class Note_book():
         if not self.data:
             print('The note book is empty')
         else:
-            self.result ='Notes that are in the note book:\n'
+            self.result ='Notes that are in the note book:'
             index = 0
 
             for record in self.data:
