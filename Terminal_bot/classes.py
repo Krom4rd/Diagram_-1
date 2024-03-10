@@ -232,6 +232,7 @@ class Address_book(UserDict): # Клас реалізований я кеш дл
             del self.data[contact_name]
 
     def search_contact(self, contact_name: str):
+        contact_name = contact_name.lower().capitalize()
         if contact_name in self.data:
             return self.data[contact_name]
         else:
@@ -308,9 +309,11 @@ use command "add" to added new contact')
 
             return self.result
 
-class Note(Field):
+class Note():
     @decorate_errors
     def __init__(self, note: str = None, title: str = None, tag: str = None):
+        self._tag = list()
+        self._title = list()
         self.title = list()
         self.tag = list()
         if tag and len(tag) > 30:
@@ -323,7 +326,7 @@ class Note(Field):
             word_list = note.split()
             self.title.append(word_list[0].capitalize())
             if len(word_list) > 2:
-                self.note = word_list[1].capitalize() + ' '.join(i for i in word_list[2:])
+                self.note = word_list[1].capitalize() + ' ' + ' '.join(i for i in word_list[2:])
             else:
                 self.note = word_list[0].capitalize()
         elif note is not None:
@@ -331,12 +334,18 @@ class Note(Field):
         if self.title:
             print(f'New note with title {str(*self.title)} created')
     
+    @property
+    def tag(self):
+        return self._tag
+        
     @decorate_errors
-    def add_tag(self, tag):
+    @tag.setter
+    def tag(self, tag):
+        print(tag)
         if tag and len(tag) > 30:
             print('The length of the tag should not exceed 30 characters')
         elif tag:
-            self.tag.append(tag.lower().capitalize())
+            self._tag.append(tag.lower().capitalize())
 
     @decorate_errors
     def remove_tag_in_note(self, tag = None):
@@ -398,7 +407,7 @@ class Note_book():
             return result
         print(f'No notes found for this title: {word}')
     
-    @decorate_errors
+    @decorate_errors #----------------------------------------------------------В маін ще не реалізовано
     def search_word_in_note(self, word) -> list:
         result = []
         for item in self.data:
@@ -408,8 +417,8 @@ class Note_book():
             return result
         return f'No notes found for this word: {word}'
     
-    @decorate_errors
-    def remove_tag_for_all_notes(self, tag):
+    @decorate_errors 
+    def remove_tag_for_all_notes(self, tag): #----------------------------------------------------------В маін ще не реалізовано
         if tag is not None:
             note_list = self.search_note_with_tag_or_title(tag)
         if note_list is str():
@@ -475,8 +484,15 @@ class User_Info(Field):
     def __init__(self, login, password) -> None:
         self.login = login
         self.__password = None
-        if self.password_validator(password):
-            self.password = password
+        while True:
+            if self.password_validator(password):
+                self.password = password
+                break
+            else:
+                password = input('>>>')
+
+                
+            
 
     @property
     def password(self):
@@ -532,5 +548,4 @@ class User_Info(Field):
             print('The password must contain at least one lowercase letter.')
         if not lower_simbol:
             print('The password must contain at least one capital letter.')
-        self.password_validator(input('>>>'))
 

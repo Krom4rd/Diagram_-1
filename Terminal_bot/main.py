@@ -1,10 +1,11 @@
+import webbrowser
+import pathlib
+import pickle
+
 from classes import Address_book, Contact, Phone, Note_book, User_Info
 from sorter import start
 from start import logo, simulate_loanding
 from random import choice
-import webbrowser
-import pathlib
-import pickle
 
 # Кеш для роботи програми
 user_login = None
@@ -49,7 +50,6 @@ def add_contact(data): # Фукція для додавання контакту
 @ input_error    
 def add_phone(data): # Функція для додавання номеру телефону в контакт
     name, phone = data # Приймає список з двох аргументів та присвоює ці аргументи змінним name та phone 
-    name = name.lower().capitalize() # Імя форматується в визначений формат для запису та взаємодії
     contact = cache.search_contact(name) # Пошук контакру в кеші
     if contact is None: # Якщо контакту незнайдено нічого не відбувається
         return 
@@ -61,7 +61,6 @@ def add_phone(data): # Функція для додавання номеру т�
 @ input_error
 def edit_phone(data): # Функція для редагування номеру телефона визначеного контакту
     name, old_phone, new_phone = data # Приймає сприсок з трьох аргументів та присвоює ці аргументи змінним name, old_phone та new_phone
-    name = name.lower().capitalize() # Імя форматується в визначений формат для запису та взаємодії
     contact = cache.search_contact(name) # Пошук контакру в кеші
     if contact is None: # Якщо контакту незнайдено нічого не відбувається
         return 
@@ -70,7 +69,6 @@ def edit_phone(data): # Функція для редагування номер�
 @ input_error
 def del_phone(data): # Функція для видалення номеру телефона контакту
     name, phone = data # Приймає список з двох аргументів та присвоює ці аргументи змінним name та phone 
-    name = name.lower().capitalize() # Імя форматується в визначений формат для запису та взаємодії
     contact = cache.search_contact(name) # Пошук контакру в кеші
     if contact is None: # Якщо контакту незнайдено нічого не відбувається
         return 
@@ -89,7 +87,6 @@ def contact_output(data): # Пошук контакту
 @ input_error
 def add_email(data): # Функція додавання е-пошти для контакту
     name, email = data # Приймає список з двох аргументів та присвоює ці аргументи змінним name та email
-    name = name.lower().capitalize() # Імя форматується в визначений формат для запису та взаємодії
     contact = cache.search_contact(name) # Пошук контакру в кеші
     if contact is None: # Якщо контакту незнайдено нічого не відбувається
         return 
@@ -99,7 +96,6 @@ def add_email(data): # Функція додавання е-пошти для к
 def edit_email(data): # Функція для редагування е-пошти в вказаному контакті
     '''Для редагування е-пошти непотрібно вказувати стару пошту. Контакт не може мати більше ніж одну е-пошту'''
     name, new_email = data # Приймає список з двох аргументів та присвоює ці аргументи змінним name та email
-    name = name.lower().capitalize() #
     contact = cache.search_contact(name)
     if contact is None:
         return 
@@ -108,7 +104,7 @@ def edit_email(data): # Функція для редагування е-пошт
 @ input_error
 def add_address(data): # Функція для додавання адбеси для контакту 
     name, new_address = data[0] , '  '.join(i for i in data[1:]) # Приймає список з багатьма аргументами перший присвоюється для змінної name\
-    name = name.lower().capitalize()                             # решту аргументів перетворює в одну строку та присвоюється для змінної new_address
+    # Решту аргументів перетворює в одну строку та присвоюється для змінної new_address
     contact = cache.search_contact(name)
     if contact is None:
         return 
@@ -118,7 +114,6 @@ def add_address(data): # Функція для додавання адбеси �
 def edit_address(data): # Функція для додавання нової адреси для контакту
     '''Для редагування адреси непотрібно вказувати стару пошту. Контакт не може мати більше ніж одну адресу'''
     name, new_address = data[0], ' '.join(i for i in data[1:])
-    name = name.lower().capitalize()
     contact = cache.search_contact(name)
     if contact is None:
         return 
@@ -127,7 +122,6 @@ def edit_address(data): # Функція для додавання нової а
 @ input_error
 def add_birthday(data): # Функція для додавання дня народження для контакту 
     name, birthday = data # Приймає список з двох аргументів та присвоює ці аргументи змінним name та birthday
-    name = name.lower().capitalize()
     contact = cache.search_contact(name)
     if contact is None:
         return 
@@ -210,38 +204,49 @@ def all_notes(data): # Функція що виводить в термінал 
 @ input_error
 def del_note(data): # Функція для видалення нотатки за титулом
     title = data.lower().capitalize() # Титул форматується в визначений формат для запису та взаємодії
-    notes = note_cache.search_note_with_title(title) # Виклив функції сласу Note_book для пошуку нотатки за титулом
-    if notes is not str(): 
+    result_of_serch_notes = note_cache.search_note_with_title(title) # Виклив функції сласу Note_book для пошуку нотатки за титулом
+    if result_of_serch_notes is not None: 
         print('{0:<70}'.format('-' * 70)) # Роздільна лінія 
-        print(f'Found {len(notes)} notes with title or tag: {title}') # Інформаційна строка 
-        for i in notes: # Цикл що виведе в термінал всі нотатки з даним титулом
-            print(i) # Вивід однієї нотатки в термінал
+        print(f'Found {len(result_of_serch_notes)} notes with title or tag: {title}') # Інформаційна строка 
+        for note in result_of_serch_notes: # Цикл що виведе в термінал всі нотатки з даним титулом
+            print(note) # Вивід однієї нотатки в термінал
             user_input = input('Delete this note?\n[input:"y"->Enter]->delete\n[Enter]->skip\n>>>')
             if user_input == 'y': #Якщо це нотатка яку користувач бажає видалити потрібно ввести в термінал 'y' та натиснути ввід
-                note_cache.del_note(i) # Виклик функції класу Note_book для видалення нотатки з кешу
+                note_cache.del_note(note) # Виклик функції класу Note_book для видалення нотатки з кешу
         return
-    return notes
+    return result_of_serch_notes
 
 @ input_error
 def add_tag(data): # Функція для додавання тегу в нотатку за титулом
-    # !!!!!!!!!!!!!!!!!Потрібно доопрацювання є можливість існування декількох нотаток з однаковим титулом!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     title, tag = data # Приймає список з двох аргументів та присвоює ці аргументи змінним title та tag
-    title = title.lower().capitalize() 
-    note = note_cache.search_note_with_title(title)
-    if note is not None:
-        note[0].add_tag(tag) # Потрібно доопрацювати (тег буде добавлено в першу знайдену нотатку) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        return f'Tag {tag} for {title}'
-    return note
+    title = title.lower().capitalize()
+    tag = tag.lower().capitalize()
+    result_of_serch_notes = note_cache.search_note_with_title(title)
+    if result_of_serch_notes is not None:
+        print('{0:<70}'.format('-' * 70)) # Роздільна лінія 
+        print(f'Found {len(result_of_serch_notes)} notes with title or tag: {title}') # Інформаційна строка 
+        for note in result_of_serch_notes:
+            print(note) # Вивід однієї нотатки в термінал
+            user_input = input('Add tag for this note?\n[input:"y"->Enter]->delete\n[Enter]->skip\n>>>')
+            if user_input == 'y': #Якщо це нотатка яку користувач бажає додати тег до цієї нотатки потрібно ввести в термінал 'y' та натиснути ввід
+                note.tag.append(tag) # Добавляє тег в визначену нотатку
+                print (f'Tag: "{tag}" added for note with title: "{title}"')
 
 @ input_error
 def del_tag(data): # Функція видалення тегу з нотатки за титулом
-    # !!!!!!!!!!!!!!!!!Потрібно доопрацювання є можливість існування декількох нотаток з однаковим титулом!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     title, tag = data
     tag = tag .lower().capitalize()
     title = title.lower().capitalize()
-    note = note_cache.search_note_with_title(title)
-    if note is not None :
-        note[0].remove_tag_in_note(tag) # Потрібно доопрацювати (тег буде видалено з першої знайденої нотатки) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    result_of_serch_notes = note_cache.search_note_with_title(title)
+    result_of_serch_notes = [i for i in result_of_serch_notes if tag in i.tag]
+    if result_of_serch_notes is not None:
+        print('{0:<70}'.format('-' * 70)) # Роздільна лінія 
+        print(f'Found {len(result_of_serch_notes)} notes with title or tag: {title}') # Інформаційна строка 
+        for note in result_of_serch_notes:
+            print(note) # Вивід однієї нотатки в термінал
+            user_input = input('Delete tag for this note?\n[input:"y"->Enter]->delete\n[Enter]->skip\n>>>')
+            if user_input == 'y': #Якщо це нотатка яку користувач бажає видалити тег з цієї нотатки потрібно ввести в термінал 'y' та натиснути ввід
+                note.remove_tag_in_note(tag) # Видаляє тег для визначеної нотатки
         return
     return note
 
@@ -340,8 +345,8 @@ def load_user_cache(login): # Вхід в прогаму за допомогою
                         return False
                     else: # Повідомлення про ввід хибного пароля та залишок спроб для його введення
                         print(f'Sorry. Wrong password try again. You have {trys_enter_password} attempts')
-        if password_validator:
-            break
+            if password_validator:
+                break
     if password_validator: # 
         global note_cache
         user_login = login
@@ -451,42 +456,48 @@ def commands(data):
 
 def main():
     print(logo)
-    simulate_loanding()   
+    simulate_loanding()  
     while True:
-        print('Enter your login or press enter to create a new user.')
-        user_input = input('>>>')
-        if user_input in COMMANDS[exit]:
-            exit(None)
-        if user_input != '':
-            if load_user_cache(user_input):
-                break
-        else:
-            create_new_user()        
+        try:
+            print('Enter your login or press enter to create a new user.')
+            user_input = input('>>>')
+            if user_input in COMMANDS[exit]:
+                exit(None)
+            if user_input != '':
+                if load_user_cache(user_input):
+                    break
+            else:
+                create_new_user()
+        except KeyboardInterrupt:
+            continue
     # Цикл для тривалої роботи програми
     if user_login:
         simulate_loanding()
         print(greeting(None))
         while True:
-            # Отримання даних від користувачаa
-            user_input = input('>>>')
-            if user_input:
-                func, data = commands(user_input)
-            if func == None:
+            try:
+                # Отримання даних від користувачаa
+                user_input = input('>>>')
+                if user_input:
+                    func, data = commands(user_input)
+                if func == None:
+                    continue
+                elif func == exit:
+                    # Вихід з програми та запис кешу в окремий файл
+                    func(data)
+                    print('Good bye')
+                    break
+                else:
+                    # Запуск команд
+                    result = func(data)
+                    if result is None:
+                        continue
+                    try:
+                        print(result)
+                    except TypeError:
+                        continue
+            except KeyboardInterrupt:
                 continue
-            elif func == exit:
-                # Вихід з програми та запис кешу в окремий файл
-                func(data)
-                print('Good bye')
-                break
-            else:
-                # Запуск команд
-                result = func(data)
-                if result is None:
-                    continue
-                try:
-                    print(result)
-                except TypeError:
-                    continue
 
 
 if __name__ == '__main__':
